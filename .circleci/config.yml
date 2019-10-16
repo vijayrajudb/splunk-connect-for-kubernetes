@@ -43,12 +43,19 @@ jobs:
             until kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do
               sleep 1;
             done 
-      # - run:
-      #     name: Install Splunk
-      #     command: |
-      #       cd /tmp && wget https://download.splunk.com/products/splunk/releases/7.1.1/linux/splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb
-      #       sudo dpkg -i splunk-7.1.1-8f0ead9ec3db-linux-2.6-amd64.deb
-      #       #sudo service splunk start
+      - run:
+          name: Install Splunk
+          command: |
+            cd /tmp && wget -O splunk-7.3.2-c60db69f8e32-linux-2.6-amd64.deb 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=7.3.2&product=splunk&filename=splunk-7.3.2-c60db69f8e32-linux-2.6-amd64.deb&wget=true'
+            sudo dpkg -i splunk-7.3.2-c60db69f8e32-linux-2.6-amd64.deb
+            hashed_pwd=$(sudo ./bin/splunk hash-passwd helloworld)
+            sudo tee etc/system/local/user-seed.conf > /dev/null << EOF
+            [user_info]
+            USERNAME = admin
+            HASHED_PASSWORD = $hashed_pwd
+            EOF
+
+
 
 
 
